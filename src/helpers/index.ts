@@ -3,7 +3,7 @@ import relativeTime from "../relativeTime";
 
 export function statusCssClass(status: PodStatus): string {
   if (status === "Succeeded") return "green";
-  if (status === "Pending") return "yellow";
+  if (status === "Pending") return "orange";
   if (status === "Running") return "blue";
   return "red";
 }
