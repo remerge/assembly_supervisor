@@ -3,17 +3,80 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Guitar Inventory</title>
+    <title>Kubernetes Job Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
     />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <style>
+      span.badge.new:after { content: ''; }
+      ul.job-counts li { display: inline; padding-right: 10px; }
+    </style>
   </head>
   <body>
     <div class="container">
       <h1 class="header">Running Jobs</h1>
-    </div>
+
+      <ul class="job-counts">
+        <li><strong>Running</strong> <%= counts.Running %></li>
+        <li><strong>Pending:</strong> <%= counts.Pending %></li>
+        <li><strong>Failed:</strong> <%= counts.Failed %></li>
+        <li><strong>Succeeded:</strong> <%= counts.Succeeded %></li>
+      </ul>
+
+      <table class="striped">
+        <thead>
+          <th>Name</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th>Started</th>
+          <th>Runtime</th>
+          <th>Runs</th>
+          <th>Link to GCP</th>
+        </thead>
+
+        <tbody>
+          <% jobs.forEach(job => { %>
+          <tr>
+            <td>
+              <%= job.name %>
+            </td>
+            <td>
+              <span class="badge new <%= statusCssClass(job.status) %>" title="<%= job.reason %>">
+                <%= job.status %>
+              </span>
+            </td>
+            <td title="<%= job.createdAt %>">
+              <%= relativeTime(job.createdAt) %>
+            </td>
+            <td title="<%= job.startedAt %>">
+              <%= job.startedAt ? relativeTime(job.startedAt) : "-" %>
+            </td>
+            <td title="<%= job.finishedAt %>">
+
+              <%= job.finishedAt ? relativeTime(job.startedAt, job.finishedAt) : "-" %>
+            </td>
+            <td>
+              <% job.pods.forEach((pod, index) => { %>
+                <a href="<%= gcpPodUrl(pod) %>">
+                  <span class="badge new <%= statusCssClass(pod.status) %>">
+                    <%= index + 1 %>
+                  </span>
+                </a>
+              <% }) %>
+            </td>
+            <td>
+              <a class="waves-effect waves-light btn" href="<%= gcpJobUrl(job) %>">
+                <i class="material-icons left">cloud</i>
+                View in GCP
+              </a>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </ul></ul>>
   </body>
 </html>
