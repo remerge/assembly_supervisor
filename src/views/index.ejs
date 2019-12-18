@@ -10,28 +10,44 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
     />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function() {
         var tooltipDomElements = document.querySelectorAll('.tooltipped:not([data-tooltip=""])');
         M.Tooltip.init(tooltipDomElements);
+
+        var jobCountsElement = document.getElementById("job-counts");
+        var counts = JSON.parse(jobCountsElement.dataset.counts);
+        var jobCounts = new Chart(jobCountsElement.getContext("2d"), {
+          type: "pie",
+          data: {
+            datasets: [{
+              data: [counts.Succeeded, counts.Failed, counts.Running, counts.Pending],
+              backgroundColor: [
+                "#4CAF50", // Succeeded
+                "#F44336", // Failed
+                "#2196F3", // Running
+                "#ff9800", // Pending
+              ]
+            }],
+            labels: ["Succeeded", "Failed", "Running", "Pending"],
+          }
+        });
       });
     </script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
     <style>
       span.badge.new:after { content: ''; }
-      ul.job-counts li { display: inline; padding-right: 10px; }
+      .chart-container { width: 200px; height: 200px; }
     </style>
   </head>
   <body>
     <div class="container">
       <h1 class="header">Jobs</h1>
 
-      <ul class="job-counts">
-        <li><strong>Running</strong> <%= counts.Running %></li>
-        <li><strong>Pending:</strong> <%= counts.Pending %></li>
-        <li><strong>Failed:</strong> <%= counts.Failed %></li>
-        <li><strong>Succeeded:</strong> <%= counts.Succeeded %></li>
-      </ul>
+      <div class="chart-container">
+        <canvas width="200" height="200" id="job-counts" data-counts="<%= JSON.stringify(counts) %>"></canvas>
+      </div>
 
       <table class="striped">
         <thead>
