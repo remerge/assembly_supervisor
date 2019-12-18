@@ -9,6 +9,13 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
     />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        var tooltipDomElements = document.querySelectorAll('.tooltipped:not([data-tooltip=""])');
+        M.Tooltip.init(tooltipDomElements);
+      });
+    </script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
     <style>
       span.badge.new:after { content: ''; }
@@ -44,23 +51,29 @@
               <%= job.name %>
             </td>
             <td>
-              <span class="badge new <%= statusCssClass(job.status) %>" title="<%= job.reason %>">
+              <span class="tooltipped badge new <%= statusCssClass(job.status) %>" data-tooltip="<%= job.reason %>">
                 <%= job.status %>
               </span>
             </td>
-            <td title="<%= job.createdAt %>">
+            <td>
+              <span  class="tooltipped" data-tooltip="<%= job.createdAt %>">
               <%= relativeTime(job.createdAt) %>
-            </td>
-            <td title="<%= job.startedAt %>">
-              <%= job.startedAt ? relativeTime(job.startedAt) : "-" %>
-            </td>
-            <td title="<%= job.finishedAt %>">
-
-              <%= job.finishedAt ? relativeTime(job.startedAt, job.finishedAt) : "-" %>
+              </span>
             </td>
             <td>
+              <span  class="tooltipped" data-tooltip="<%= job.startedAt %>">
+                <%= job.startedAt ? relativeTime(job.startedAt) : "-" %>
+              </span>
+            </td>
+            <td>
+              <span  class="tooltipped" data-tooltip="<%= job.finishedAt %>">
+                <%= job.finishedAt ? relativeTime(job.startedAt, job.finishedAt) : "-" %>
+              </span>
+            </td>
+              <span  class="tooltipped" data-tooltip="<%= job.createdAt %>" >
+            <td>
               <% job.pods.forEach((pod, index) => { %>
-                <a href="<%= gcpPodUrl(pod) %>">
+                <a href="<%= gcpPodUrl(pod) %>" class="tooltipped" data-tooltip="<%= tooltipForPod(pod) %>">
                   <span class="badge new <%= statusCssClass(pod.status) %>">
                     <%= index + 1 %>
                   </span>
